@@ -5,7 +5,7 @@ from PIL import Image
 
 
 class OcrHelper:
-    """透過截圖 + OpenCV 模板比對，在畫面上定位圖示並回傳中心座標。"""
+    """透過截圖 + OpenCV 彩色模板比對，在畫面上定位圖示並回傳中心座標。"""
 
     def __init__(self, driver, threshold: float = 0.75):
         self.driver = driver
@@ -17,8 +17,8 @@ class OcrHelper:
         回傳 (x, y) 為圖示中心的 CSS 像素座標（已除以 devicePixelRatio），
         可直接傳給 document.elementFromPoint。找不到則拋出 RuntimeError。
         """
-        screenshot = self._get_screenshot_gray()
-        template = self._load_template_gray(template_path)
+        screenshot = self._get_screenshot_color()
+        template = self._load_template_color(template_path)
         top_left = self._match(screenshot, template)
         h, w = template.shape[:2]
         cx = top_left[0] + w // 2
@@ -26,13 +26,13 @@ class OcrHelper:
         dpr = self.driver.execute_script("return window.devicePixelRatio") or 1
         return cx / dpr, cy / dpr
 
-    def _get_screenshot_gray(self) -> np.ndarray:
+    def _get_screenshot_color(self) -> np.ndarray:
         png_bytes = self.driver.get_screenshot_as_png()
-        image = Image.open(io.BytesIO(png_bytes)).convert("L")
-        return np.array(image)
+        image = Image.open(io.BytesIO(png_bytes)).convert("RGB")
+        return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-    def _load_template_gray(self, path: str) -> np.ndarray:
-        template = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    def _load_template_color(self, path: str) -> np.ndarray:
+        template = cv2.imread(path, cv2.IMREAD_COLOR)
         if template is None:
             raise FileNotFoundError(f"模板圖片不存在: {path}")
         return template
