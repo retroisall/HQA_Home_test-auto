@@ -18,8 +18,9 @@ class BasePage:
         return self.wait.until(EC.presence_of_element_located(locator))
 
     def click(self, locator):
-        """等待元素可點擊後執行點擊。"""
-        self.wait.until(EC.element_to_be_clickable(locator)).click()
+        """等待元素出現後用 JS 點擊（繞過 overlay / React hydration 未完成的問題）。"""
+        el = self.wait.until(EC.presence_of_element_located(locator))
+        self.driver.execute_script("arguments[0].click();", el)
 
     def type_text(self, locator, text: str):
         """清空欄位後輸入指定文字。"""

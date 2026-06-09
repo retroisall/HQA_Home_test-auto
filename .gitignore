@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 screenshots/*.png
 .env
+debug_*.py
+debug_*.png
+venv/
