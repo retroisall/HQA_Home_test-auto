@@ -8,8 +8,8 @@ class LivePage(BasePage):
 
     # 成人內容確認按鈕（部分頻道會出現）
     MATURE_ACCEPT = (By.CSS_SELECTOR, '[data-a-target="player-overlay-mature-accept"]')
-    # 訂閱 / 通知彈窗的關閉按鈕
-    MODAL_CLOSE = (By.CSS_SELECTOR, '[aria-label="Close"], [data-a-target="modal-close-button"]')
+    # 訂閱 / 通知 / 登入彈窗的關閉按鈕（含中文 aria-label）
+    MODAL_CLOSE = (By.CSS_SELECTOR, '[aria-label="Close"], [aria-label="關閉對話框"], [data-a-target="modal-close-button"]')
     # Cookie 同意橫幅
     COOKIE_ACCEPT = (By.CSS_SELECTOR, '[data-a-target="consent-banner-accept"]')
     # 播放器元素（確認串流已載入的依據）
