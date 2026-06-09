@@ -1,6 +1,6 @@
 # HQA Home Test — Twitch WAP Automation
 
-End-to-end test suite for Twitch mobile (WAP) using **Python + pytest + Selenium** with Chrome Mobile Emulator.
+End-to-end test suite for Twitch using **Python + pytest + Selenium** with desktop Chrome.
 
 ## Demo
 
@@ -20,7 +20,7 @@ project/
 │  ├─ search_page.py          # Search input, scroll, streamer selection
 │  └─ live_page.py            # Streamer page — popups & screenshot
 ├─ screenshots/               # Auto-generated screenshots (git-ignored)
-├─ conftest.py                # pytest fixture — Chrome Mobile Emulator setup
+├─ conftest.py                # pytest fixture — desktop Chrome WebDriver setup
 ├─ pytest.ini                 # pytest configuration
 └─ requirements.txt           # Python dependencies
 ```
@@ -67,4 +67,6 @@ Screenshots are saved to `screenshots/starcraft2_streamer.png` after each run.
 - **pytest** — test runner
 - **Selenium 4** — browser automation
 - **webdriver-manager** — automatic ChromeDriver management
-- **Chrome Mobile Emulator** — iPhone 14 Pro device metrics (390×844, 3× DPR)
+- **opencv-python** — template matching for UI element detection
+- **numpy** — image array processing
+- **Pillow** — image capture and preprocessing
