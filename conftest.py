@@ -4,18 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-# 手機螢幕尺寸（390x844 / 3x DPR）搭配桌面 Chrome UA。
-# 原因：iOS / Android UA 會觸發 Twitch 強制 redirect 到 m.twitch.tv（另一套完全不同的行動版），
-# 導致所有選取器全部失效。使用桌面 UA 讓 Twitch 服務 responsive 桌面版，
-# 在 390px 寬度下自動顯示手機版面配置，符合「Chrome Mobile Emulator」規格要求。
-_MOBILE_EMULATION = {
-    "deviceMetrics": {"width": 390, "height": 844, "pixelRatio": 3.0},
-    "userAgent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-}
+_MOBILE_EMULATION = {"deviceName": "iPhone 12 Pro"}
 
 
 @pytest.fixture(scope="session")

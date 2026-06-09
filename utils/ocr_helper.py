@@ -14,7 +14,8 @@ class OcrHelper:
     def find_icon_center(self, template_path: str) -> tuple:
         """
         在當前頁面截圖中尋找 template_path 圖示的位置。
-        回傳 (x, y) 為圖示中心的像素座標，找不到則拋出 RuntimeError。
+        回傳 (x, y) 為圖示中心的 CSS 像素座標（已除以 devicePixelRatio），
+        可直接傳給 document.elementFromPoint。找不到則拋出 RuntimeError。
         """
         screenshot = self._get_screenshot_gray()
         template = self._load_template_gray(template_path)
@@ -22,7 +23,8 @@ class OcrHelper:
         h, w = template.shape[:2]
         cx = top_left[0] + w // 2
         cy = top_left[1] + h // 2
-        return cx, cy
+        dpr = self.driver.execute_script("return window.devicePixelRatio") or 1
+        return cx / dpr, cy / dpr
 
     def _get_screenshot_gray(self) -> np.ndarray:
         png_bytes = self.driver.get_screenshot_as_png()
@@ -39,7 +41,9 @@ class OcrHelper:
         result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
         _, max_val, _, max_loc = cv2.minMaxLoc(result)
         if max_val < self.threshold:
+            cv2.imwrite("debug_ocr_fail.png", screenshot)
             raise RuntimeError(
                 f"找不到目標圖示（相似度 {max_val:.2f} < 門檻 {self.threshold}）"
+                f"，已儲存 debug_ocr_fail.png"
             )
         return max_loc
