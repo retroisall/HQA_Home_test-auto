@@ -6,34 +6,26 @@ SEARCH_QUERY = "StarCraft II"
 
 
 class TestTwitchWAP:
-    """WAP 端對端測試：使用 Chrome 手機模擬器操作 Twitch 搜尋與觀看直播。"""
-
     def test_search_and_view_starcraft_streamer(self, driver):
-        """
-        完整流程測試：
-        1. 前往 Twitch
-        2. 點擊搜尋圖示
-        3. 輸入 StarCraft II
-        4. 向下捲動兩次
-        5. 選取一位直播主
-        6. 等待頁面載入完成並截圖
-        """
-        # Step 1 & 2 — 前往首頁並點擊搜尋
+        # 前往 Twitch
         home = HomePage(driver)
-        home.open().click_search()
+        home.open()
 
-        # Step 3 — 輸入搜尋關鍵字
+        # 點擊搜尋圖標
+        home.click_search()
+
+        # 輸入星海爭霸II
         search = SearchPage(driver)
         search.dismiss_cookie_banner()
         search.search_for(SEARCH_QUERY)
 
-        # Step 4 — 向下捲動兩次
+        # 向下捲動 2 次
         search.scroll_down_twice()
 
-        # Step 5 — 選取第一位直播主
+        # 選擇一位主播
         search.select_first_streamer()
 
-        # Step 6 — 處理可選彈窗、等待串流、截圖
+        # 在直播頁面等待所有內容載入完畢後截圖
         live = LivePage(driver)
         live.dismiss_popups()
         live.wait_for_stream()
