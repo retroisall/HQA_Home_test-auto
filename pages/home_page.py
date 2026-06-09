@@ -1,22 +1,24 @@
-from selenium.webdriver.common.by import By
+import os
+from selenium.webdriver.common.action_chains import ActionChains
 from pages.base_page import BasePage
+from utils.ocr_helper import OcrHelper
+
+SEARCH_ICON_TEMPLATE = os.path.join(
+    os.path.dirname(__file__), "..", "assets", "search_icon.png"
+)
 
 
 class HomePage(BasePage):
-    """Twitch 首頁：負責開啟網站與點擊搜尋輸入框。"""
-
     URL = "https://www.twitch.tv"
 
-    # 搜尋 input（390px 手機版面下已直接顯示於 nav，無需先點擊搜尋按鈕）
-    SEARCH_INPUT = (By.CSS_SELECTOR, 'input[autocomplete="twitch-nav-search"]')
-
     def open(self) -> "HomePage":
-        """前往 Twitch 首頁並等待頁面載入完成。"""
         self.driver.get(self.URL)
         self.wait_for_page_load()
         return self
 
     def click_search(self) -> "HomePage":
-        """點擊搜尋輸入框（即規格中的「點擊搜尋圖示」步驟）。"""
-        self.find_visible(self.SEARCH_INPUT).click()
+        """透過 OCR 圖形比對定位放大鏡圖示後點擊。"""
+        ocr = OcrHelper(self.driver)
+        x, y = ocr.find_icon_center(SEARCH_ICON_TEMPLATE)
+        ActionChains(self.driver).move_by_offset(x, y).click().perform()
         return self

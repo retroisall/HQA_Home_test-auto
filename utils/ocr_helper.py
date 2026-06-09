@@ -1,0 +1,45 @@
+import io
+import numpy as np
+import cv2
+from PIL import Image
+
+
+class OcrHelper:
+    """透過截圖 + OpenCV 模板比對，在畫面上定位圖示並回傳中心座標。"""
+
+    def __init__(self, driver, threshold: float = 0.75):
+        self.driver = driver
+        self.threshold = threshold
+
+    def find_icon_center(self, template_path: str) -> tuple:
+        """
+        在當前頁面截圖中尋找 template_path 圖示的位置。
+        回傳 (x, y) 為圖示中心的像素座標，找不到則拋出 RuntimeError。
+        """
+        screenshot = self._get_screenshot_gray()
+        template = self._load_template_gray(template_path)
+        top_left = self._match(screenshot, template)
+        h, w = template.shape[:2]
+        cx = top_left[0] + w // 2
+        cy = top_left[1] + h // 2
+        return cx, cy
+
+    def _get_screenshot_gray(self) -> np.ndarray:
+        png_bytes = self.driver.get_screenshot_as_png()
+        image = Image.open(io.BytesIO(png_bytes)).convert("L")
+        return np.array(image)
+
+    def _load_template_gray(self, path: str) -> np.ndarray:
+        template = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        if template is None:
+            raise FileNotFoundError(f"模板圖片不存在: {path}")
+        return template
+
+    def _match(self, screenshot: np.ndarray, template: np.ndarray) -> tuple:
+        result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+        _, max_val, _, max_loc = cv2.minMaxLoc(result)
+        if max_val < self.threshold:
+            raise RuntimeError(
+                f"找不到目標圖示（相似度 {max_val:.2f} < 門檻 {self.threshold}）"
+            )
+        return max_loc
