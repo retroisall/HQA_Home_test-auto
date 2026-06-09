@@ -7,10 +7,10 @@ class HomePage(BasePage):
 
     URL = "https://www.twitch.tv"
 
-    # Twitch 一致使用 data-a-target 屬性；第二個 selector 作為 fallback
-    SEARCH_BUTTON = (
+    # 新版 Twitch 首頁直接顯示搜尋框，無獨立搜尋按鈕
+    SEARCH_INPUT = (
         By.CSS_SELECTOR,
-        '[data-a-target="nav-search-button"], a[href="/search"]',
+        '[data-a-target="nav-search-box"] input[type="search"]',
     )
 
     def open(self) -> "HomePage":
@@ -20,6 +20,6 @@ class HomePage(BasePage):
         return self
 
     def click_search(self) -> "HomePage":
-        """點擊頂部搜尋圖示，進入搜尋頁。"""
-        self.click(self.SEARCH_BUTTON)
+        """點擊搜尋輸入框以取得焦點。"""
+        self.click(self.SEARCH_INPUT)
         return self

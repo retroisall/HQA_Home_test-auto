@@ -8,7 +8,7 @@ class SearchPage(BasePage):
 
     SEARCH_INPUT = (
         By.CSS_SELECTOR,
-        '[data-a-target="search-input"], input[type="search"], input[type="text"]',
+        '[data-a-target="nav-search-box"] input[type="search"]',
     )
     # 搜尋結果中的直播主卡片連結
     STREAMER_CARD = (
