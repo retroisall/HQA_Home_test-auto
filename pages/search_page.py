@@ -6,19 +6,14 @@ from pages.base_page import BasePage
 class SearchPage(BasePage):
     """搜尋頁：輸入關鍵字、捲動結果清單、選取直播主。"""
 
+    # Twitch 搜尋框展開後的可見 input（DOM 中存在兩個相同 selector，用 find_visible 取可見的）
     SEARCH_INPUT = (
         By.CSS_SELECTOR,
-        '[data-a-target="nav-search-box"] input[type="search"]',
+        'input[autocomplete="twitch-nav-search"]',
     )
-    # 搜尋結果中的直播主卡片連結
-    STREAMER_CARD = (
-        By.CSS_SELECTOR,
-        (
-            '[data-a-target="preview-card-image-link"], '
-            '[data-target="directory-first-item"] a, '
-            '.search-result-card a'
-        ),
-    )
+    # 搜尋結果卡片中的第一個連結（縮圖連結）
+    STREAMER_CARD = (By.CSS_SELECTOR, '.search-result-card a')
+
     COOKIE_ACCEPT = (By.CSS_SELECTOR, '[data-a-target="consent-banner-accept"]')
 
     def dismiss_cookie_banner(self) -> "SearchPage":
@@ -27,9 +22,11 @@ class SearchPage(BasePage):
         return self
 
     def search_for(self, query: str) -> "SearchPage":
-        """在搜尋框輸入關鍵字並送出搜尋。"""
-        self.type_text(self.SEARCH_INPUT, query)
-        self.find(self.SEARCH_INPUT).send_keys(Keys.RETURN)
+        """在展開的搜尋框中輸入關鍵字並送出搜尋。"""
+        el = self.find_visible(self.SEARCH_INPUT)
+        el.clear()
+        el.send_keys(query)
+        el.send_keys(Keys.RETURN)
         self.wait_for_page_load()
         return self
 

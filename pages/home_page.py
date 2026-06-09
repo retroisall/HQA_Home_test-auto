@@ -7,10 +7,10 @@ class HomePage(BasePage):
 
     URL = "https://www.twitch.tv"
 
-    # 新版 Twitch 首頁直接顯示搜尋框，無獨立搜尋按鈕
-    SEARCH_INPUT = (
+    # 搜尋圖示按鈕（支援英文與中文介面）
+    SEARCH_BUTTON = (
         By.CSS_SELECTOR,
-        '[data-a-target="nav-search-box"] input[type="search"]',
+        'button[aria-label="Search"], button[aria-label="搜尋"]',
     )
 
     def open(self) -> "HomePage":
@@ -20,6 +20,6 @@ class HomePage(BasePage):
         return self
 
     def click_search(self) -> "HomePage":
-        """點擊搜尋輸入框以取得焦點。"""
-        self.click(self.SEARCH_INPUT)
+        """點擊搜尋圖示按鈕，展開搜尋輸入框。"""
+        self.click(self.SEARCH_BUTTON)
         return self

@@ -42,6 +42,15 @@ class BasePage:
         except Exception:
             return False
 
+    def find_visible(self, locator):
+        """多個元素符合 locator 時，等待並回傳第一個可見的。"""
+        def _check(driver):
+            for el in driver.find_elements(*locator):
+                if el.is_displayed():
+                    return el
+            return False
+        return WebDriverWait(self.driver, self.EXPLICIT_WAIT).until(_check)
+
     def dismiss_if_present(self, locator, timeout: int = 3):
         """若元素存在則點擊（用於關閉可選彈窗）。"""
         if self.is_present(locator, timeout):
