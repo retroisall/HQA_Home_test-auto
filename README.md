@@ -4,9 +4,7 @@ End-to-end test suite for Twitch using **Python + pytest + Selenium** with deskt
 
 ## Demo
 
-> ⬇️ Add a GIF here showing the test running locally (record with [ScreenToGif](https://www.screentogif.com/) or similar tool)
-
-![demo](docs/demo.gif)
+![record](record.gif)
 
 ## Folder Structure
 
