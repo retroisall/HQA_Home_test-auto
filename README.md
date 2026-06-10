@@ -60,8 +60,20 @@ pip install -r requirements.txt
 **Command Line：**
 
 ```bash
-pytest tests/test_stream_search.py -v
+# 執行所有測試
+pytest -v
+
+# 只跑主流程（smoke）
+pytest -m smoke -v
+
+# 只跑邊界情境（edge）
+pytest -m edge -v
 ```
+
+| Marker | 說明 | 測試檔 |
+|--------|------|--------|
+| `smoke` | 主要流程：搜尋 → 捲動 → 直播頁截圖 | `test_stream_search.py` |
+| `edge` | 邊界情境：空白搜尋、亂碼、過度捲動、播放器前置確認 | `test_search_edge_cases.py` |
 
 測試結束後，截圖儲存於 `screenshots/starcraft2_streamer.png`，執行 log 儲存於 `logs/test_run.log`。
 
