@@ -33,8 +33,14 @@ class BasePage:
             time.sleep(self.STEP_PAUSE)
 
     def scroll_down(self, pixels: int = 600):
-        """向下捲動指定像素後等待動畫完成。"""
-        self.driver.execute_script(f"window.scrollBy(0, {pixels});")
+        """向下捲動指定像素後等待動畫完成（相容 window scroll 與 Twitch container scroll）。"""
+        self.driver.execute_script(f"""
+            window.scrollBy(0, {pixels});
+            document.documentElement.scrollTop += {pixels};
+            document.body.scrollTop += {pixels};
+            var container = document.querySelector('.root-scrollable');
+            if (container) container.scrollTop += {pixels};
+        """)
         time.sleep(self.STEP_PAUSE)
 
     def is_present(self, locator, timeout: int = 3) -> bool:
@@ -72,8 +78,13 @@ class BasePage:
         return filepath
 
     def get_scroll_y(self) -> int:
-        """回傳目前頁面的垂直捲動位置。"""
-        return self.driver.execute_script("return window.scrollY")
+        """回傳目前頁面的垂直捲動位置（相容 window scroll 與 Twitch container scroll）。"""
+        return self.driver.execute_script("""
+            var vals = [window.scrollY || 0, document.documentElement.scrollTop || 0];
+            var container = document.querySelector('.root-scrollable');
+            if (container) vals.push(container.scrollTop || 0);
+            return Math.max.apply(null, vals);
+        """)
 
     def wait_for_page_load(self):
         """等待 document.readyState 為 complete。"""
