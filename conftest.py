@@ -16,6 +16,7 @@ def driver():
 
     service = Service(ChromeDriverManager().install())
     d = webdriver.Chrome(service=service, options=options)
+    d.set_window_size(1024, 768)
     d.implicitly_wait(10)
     yield d
     d.quit()
