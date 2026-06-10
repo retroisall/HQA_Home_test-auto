@@ -8,3 +8,5 @@ debug_*.py
 debug_*.png
 venv/
 .gstack/
+logs/
+.playwright-mcp/

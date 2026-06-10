@@ -15,18 +15,32 @@ class LivePage(BasePage):
     # 播放器元素（確認串流已載入的依據）
     PLAYER = (By.CSS_SELECTOR, 'video, [data-a-target="video-player"]')
 
-    def dismiss_popups(self) -> "LivePage":
-        """依序嘗試關閉成人內容確認、彈窗、Cookie 橫幅（皆為可選）。"""
-        self.dismiss_if_present(self.MATURE_ACCEPT, timeout=5)
-        self.dismiss_if_present(self.MODAL_CLOSE, timeout=3)
-        self.dismiss_if_present(self.COOKIE_ACCEPT, timeout=3)
+    def wait_for_page(self) -> "LivePage":
+        """等待頁面 document.readyState 為 complete。"""
+        self.wait_for_page_load()
         return self
 
-    def wait_for_stream(self) -> "LivePage":
-        """等待頁面與播放器元素完全載入。"""
-        self.wait_for_page_load()
+    def wait_for_player(self) -> "LivePage":
+        """等待播放器元素出現，確認串流已載入。"""
         self.is_present(self.PLAYER, timeout=15)
         return self
+
+    def is_player_visible(self) -> bool:
+        """確認播放器元素在畫面上可見。"""
+        try:
+            self.find_visible(self.PLAYER)
+            return True
+        except Exception:
+            return False
+
+    def is_stream_playing(self) -> bool:
+        """確認 video 元素已開始播放（readyState >= 2 表示有足夠資料可播放）。"""
+        try:
+            return self.driver.execute_script(
+                "var v = document.querySelector('video'); return v && v.readyState >= 2;"
+            )
+        except Exception:
+            return False
 
     def capture(self, directory: str = "screenshots", filename: str = "streamer.png") -> str:
         """截圖並儲存至 screenshots/ 資料夾，回傳儲存路徑。"""

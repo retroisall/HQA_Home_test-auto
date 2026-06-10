@@ -14,29 +14,37 @@ class SearchPage(BasePage):
     # 搜尋結果卡片中的第一個連結（縮圖連結）
     STREAMER_CARD = (By.CSS_SELECTOR, '.search-result-card a')
 
-    COOKIE_ACCEPT = (By.CSS_SELECTOR, '[data-a-target="consent-banner-accept"]')
-
-    def dismiss_cookie_banner(self) -> "SearchPage":
-        """若出現 Cookie 同意橫幅則關閉，避免遮擋後續操作。"""
-        self.dismiss_if_present(self.COOKIE_ACCEPT, timeout=5)
-        return self
-
-    def search_for(self, query: str) -> "SearchPage":
-        """在展開的搜尋框中輸入關鍵字並送出搜尋。"""
+    def type_query(self, query: str) -> "SearchPage":
+        """在展開的搜尋框中輸入關鍵字。"""
         el = self.find_visible(self.SEARCH_INPUT)
         el.clear()
         el.send_keys(query)
-        el.send_keys(Keys.RETURN)
-        self.wait_for_page_load()
         return self
 
-    def scroll_down_twice(self) -> "SearchPage":
-        """向下捲動兩次以載入更多搜尋結果。"""
-        self.scroll_down()
-        self.scroll_down()
+    def submit_search(self) -> "SearchPage":
+        """送出搜尋（按下 Enter）並等待結果頁載入。"""
+        el = self.find_visible(self.SEARCH_INPUT)
+        el.send_keys(Keys.RETURN)
+        self.wait_for_page_load()
         return self
 
     def select_first_streamer(self) -> "SearchPage":
         """點擊第一個直播主卡片，進入其直播頁面。"""
         self.click(self.STREAMER_CARD)
         return self
+
+    def is_search_input_visible(self) -> bool:
+        """確認搜尋輸入框已出現且可見。"""
+        try:
+            self.find_visible(self.SEARCH_INPUT)
+            return True
+        except Exception:
+            return False
+
+    def get_input_value(self) -> str:
+        """回傳搜尋輸入框目前的值。"""
+        return self.find_visible(self.SEARCH_INPUT).get_attribute("value")
+
+    def has_results(self) -> bool:
+        """確認搜尋結果卡片至少出現一張。"""
+        return self.is_present(self.STREAMER_CARD, timeout=10)
