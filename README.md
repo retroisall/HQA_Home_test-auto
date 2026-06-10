@@ -53,11 +53,17 @@ pip install -r requirements.txt
 
 ## Run
 
+**Windows（推薦）：**
+
+直接雙擊 `run_test.bat`，會自動啟動虛擬環境、執行測試，並將完整 log 儲存至 `logs/test_run.log`。
+
+**Command Line：**
+
 ```bash
-pytest
+pytest tests/test_stream_search.py -v
 ```
 
-Screenshots are saved to `screenshots/starcraft2_streamer.png` after each run.
+測試結束後，截圖儲存於 `screenshots/starcraft2_streamer.png`，執行 log 儲存於 `logs/test_run.log`。
 
 ## Tech Stack
 
