@@ -1,4 +1,5 @@
 import os
+import pytest
 from pages.home_page import HomePage
 from pages.search_page import SearchPage
 from pages.live_page import LivePage
@@ -6,6 +7,7 @@ from pages.live_page import LivePage
 SEARCH_QUERY = "StarCraft II"
 
 
+@pytest.mark.smoke
 class TestTwitchWAP:
     def test_search_and_view_starcraft_streamer(self, driver):
         # 前往 Twitch

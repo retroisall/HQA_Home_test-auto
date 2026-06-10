@@ -72,6 +72,16 @@ class BasePage:
         except Exception:
             pass
 
+    def retry(self, fn, retries: int = 3, delay: float = 1.0):
+        """遞迴重試 fn()：失敗時等待 delay 秒後再試，最多重試 retries 次。"""
+        try:
+            return fn()
+        except Exception:
+            if retries <= 0:
+                raise
+            time.sleep(delay)
+            return self.retry(fn, retries - 1, delay)
+
     def take_screenshot(self, filepath: str) -> str:
         """截圖並儲存至指定路徑，回傳路徑字串。"""
         self.driver.save_screenshot(filepath)

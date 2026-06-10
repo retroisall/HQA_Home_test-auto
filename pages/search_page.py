@@ -29,8 +29,8 @@ class SearchPage(BasePage):
         return self
 
     def select_first_streamer(self) -> "SearchPage":
-        """點擊第一個直播主卡片，進入其直播頁面。"""
-        self.click(self.STREAMER_CARD)
+        """點擊第一個直播主卡片，動態渲染未完成時自動遞迴重試。"""
+        self.retry(lambda: self.click(self.STREAMER_CARD))
         return self
 
     def is_search_input_visible(self) -> bool:

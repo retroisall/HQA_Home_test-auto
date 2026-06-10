@@ -25,23 +25,27 @@ class HomePage(BasePage):
         return self
 
     def click_search(self) -> "HomePage":
-        """透過 OCR 圖形比對定位放大鏡圖示後，用 JS 點擊絕對座標。"""
+        """透過 OCR 比對定位搜尋圖示後點擊，若 OCR 比對失敗則自動遞迴重試。"""
         ocr = OcrHelper(self.driver)
-        x, y = ocr.find_icon_center(SEARCH_ICON_TEMPLATE)
-        self.driver.execute_script(
-            """
-            var el = document.elementFromPoint(arguments[0], arguments[1]);
-            if (!el) throw new Error(
-                'elementFromPoint(' + arguments[0] + ',' + arguments[1] + ') returned null.'
-                + ' viewport=' + window.innerWidth + 'x' + window.innerHeight
-            );
-            var target = el;
-            while (target && target.tagName !== 'BUTTON' && target.tagName !== 'A'
-                   && target.getAttribute('role') !== 'button') {
-                target = target.parentElement;
-            }
-            (target || el).click();
-            """,
-            x, y,
-        )
+
+        def _locate_and_click():
+            x, y = ocr.find_icon_center(SEARCH_ICON_TEMPLATE)
+            self.driver.execute_script(
+                """
+                var el = document.elementFromPoint(arguments[0], arguments[1]);
+                if (!el) throw new Error(
+                    'elementFromPoint(' + arguments[0] + ',' + arguments[1] + ') returned null.'
+                    + ' viewport=' + window.innerWidth + 'x' + window.innerHeight
+                );
+                var target = el;
+                while (target && target.tagName !== 'BUTTON' && target.tagName !== 'A'
+                       && target.getAttribute('role') !== 'button') {
+                    target = target.parentElement;
+                }
+                (target || el).click();
+                """,
+                x, y,
+            )
+
+        self.retry(_locate_and_click)
         return self
