@@ -33,15 +33,13 @@ class BasePage:
             time.sleep(self.STEP_PAUSE)
 
     def scroll_down(self, pixels: int = 600):
-        """向下捲動指定像素後等待動畫完成（相容 window scroll 與 Twitch container scroll）。"""
+        """向下捲動指定像素，使用 smooth 動畫讓滑動過程可見。"""
         self.driver.execute_script(f"""
-            window.scrollBy(0, {pixels});
-            document.documentElement.scrollTop += {pixels};
-            document.body.scrollTop += {pixels};
+            window.scrollBy({{top: {pixels}, behavior: 'smooth'}});
             var container = document.querySelector('.root-scrollable');
-            if (container) container.scrollTop += {pixels};
+            if (container) container.scrollBy({{top: {pixels}, behavior: 'smooth'}});
         """)
-        time.sleep(self.STEP_PAUSE)
+        time.sleep(1.0)  # 等 smooth 動畫跑完
 
     def is_present(self, locator, timeout: int = 3) -> bool:
         """在 timeout 秒內若元素存在回傳 True，否則 False。"""

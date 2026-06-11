@@ -40,10 +40,11 @@ class TestWAPSearch:
         assert search.has_results(), "行動版搜尋結果頁未出現任何結果卡片"
 
     def test_wap_scroll_works(self, mobile_driver):
-        """Step 3：在搜尋結果頁捲動，頁面位置應往下移動。"""
+        """Step 3：在搜尋結果頁往下滑兩次，頁面位置應持續往下移動。"""
         search = MobileSearchPage(mobile_driver)
 
         y_before = search.get_scroll_y()
+        search.scroll_down()
         search.scroll_down()
         y_after = search.get_scroll_y()
 
