@@ -9,7 +9,7 @@ class SearchPage(BasePage):
     # Twitch 搜尋框展開後的可見 input（DOM 中存在兩個相同 selector，用 find_visible 取可見的）
     SEARCH_INPUT = (
         By.CSS_SELECTOR,
-        'input[autocomplete="twitch-nav-search"]',
+        'input[autocomplete="twitch-nav-search"], input[type="search"]',
     )
     # 搜尋結果卡片中的第一個連結（縮圖連結）
     STREAMER_CARD = (By.CSS_SELECTOR, '.search-result-card a')

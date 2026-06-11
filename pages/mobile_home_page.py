@@ -1,7 +1,6 @@
 import os
 from selenium.webdriver.common.by import By
 from pages.home_page import HomePage
-from utils.ocr_helper import OcrHelper
 
 _ASSETS = os.path.join(os.path.dirname(__file__), "..", "assets")
 
@@ -25,31 +24,11 @@ class MobileHomePage(HomePage):
         return self
 
     def click_search(self) -> "MobileHomePage":
-        """行動版搜尋：優先用 CSS selector，若失敗才退回 OCR template 比對。"""
+        """行動版搜尋：優先用 CSS selector，否則直接導航至行動版瀏覽/搜尋頁。"""
         if self.is_present(_SEARCH_BUTTON_CSS, timeout=3):
             self.click(_SEARCH_BUTTON_CSS)
             return self
 
-        # CSS 找不到 → 退回 OCR（需要 assets/search_icon_mobile.png）
-        ocr = OcrHelper(self.driver)
-
-        def _locate_and_click():
-            x, y = ocr.find_icon_center(self.SEARCH_ICON_TEMPLATE)
-            self.driver.execute_script(
-                """
-                var el = document.elementFromPoint(arguments[0], arguments[1]);
-                if (!el) throw new Error(
-                    'elementFromPoint(' + arguments[0] + ',' + arguments[1] + ') returned null.'
-                );
-                var target = el;
-                while (target && target.tagName !== 'BUTTON' && target.tagName !== 'A'
-                       && target.getAttribute('role') !== 'button') {
-                    target = target.parentElement;
-                }
-                (target || el).click();
-                """,
-                x, y,
-            )
-
-        self.retry(_locate_and_click)
+        # 行動版底部 tab 搜尋入口位於 /directory，直接導航
+        self.driver.get("https://m.twitch.tv/directory")
         return self

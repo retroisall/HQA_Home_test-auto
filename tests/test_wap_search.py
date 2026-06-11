@@ -1,6 +1,6 @@
 import pytest
 from pages.mobile_home_page import MobileHomePage
-from pages.search_page import SearchPage
+from pages.mobile_search_page import MobileSearchPage
 from pages.live_page import LivePage
 
 SEARCH_QUERY = "StarCraft II"
@@ -23,7 +23,7 @@ class TestWAPSearch:
         home.open()
         home.click_search()
 
-        search = SearchPage(mobile_driver)
+        search = MobileSearchPage(mobile_driver)
         assert search.is_search_input_visible(), "行動版搜尋輸入框未出現"
 
         search.type_query(SEARCH_QUERY)
@@ -39,7 +39,7 @@ class TestWAPSearch:
         home.open()
         home.click_search()
 
-        search = SearchPage(mobile_driver)
+        search = MobileSearchPage(mobile_driver)
         search.type_query(SEARCH_QUERY)
         search.submit_search()
 
@@ -56,7 +56,7 @@ class TestWAPSearch:
         home.open()
         home.click_search()
 
-        search = SearchPage(mobile_driver)
+        search = MobileSearchPage(mobile_driver)
         search.type_query(SEARCH_QUERY)
         search.submit_search()
         search.select_first_streamer()
