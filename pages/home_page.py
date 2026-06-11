@@ -4,14 +4,15 @@ from pages.base_page import BasePage
 from utils.ocr_helper import OcrHelper
 
 _ASSETS = os.path.join(os.path.dirname(__file__), "..", "assets")
-TWITCH_LOGO_TEMPLATE = os.path.join(_ASSETS, "twitch_logo.png")
-SEARCH_ICON_TEMPLATE = os.path.join(_ASSETS, "search_icon.png")
 
 _COOKIE_ACCEPT = (By.CSS_SELECTOR, '[data-a-target="consent-banner-accept"]')
 
 
 class HomePage(BasePage):
     URL = "https://www.twitch.tv"
+    # 子類別可覆寫以替換為行動版 template
+    LOGO_TEMPLATE = os.path.join(_ASSETS, "twitch_logo.png")
+    SEARCH_ICON_TEMPLATE = os.path.join(_ASSETS, "search_icon.png")
 
     def open(self) -> "HomePage":
         """前往 Twitch 首頁並等待載入。"""
@@ -21,7 +22,7 @@ class HomePage(BasePage):
 
     def verify_logo(self) -> "HomePage":
         """以 OCR 圖形比對確認 Twitch logo 出現，驗證首頁已正確載入。"""
-        OcrHelper(self.driver).find_icon_center(TWITCH_LOGO_TEMPLATE)
+        OcrHelper(self.driver).find_icon_center(self.LOGO_TEMPLATE)
         return self
 
     def click_search(self) -> "HomePage":
@@ -29,7 +30,7 @@ class HomePage(BasePage):
         ocr = OcrHelper(self.driver)
 
         def _locate_and_click():
-            x, y = ocr.find_icon_center(SEARCH_ICON_TEMPLATE)
+            x, y = ocr.find_icon_center(self.SEARCH_ICON_TEMPLATE)
             self.driver.execute_script(
                 """
                 var el = document.elementFromPoint(arguments[0], arguments[1]);
