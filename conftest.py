@@ -22,7 +22,7 @@ def driver():
     d.quit()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def mobile_driver():
     """建立 iPhone 12 Pro Chrome 行動模擬 WebDriver，WAP 測試專用。"""
     options = Options()
