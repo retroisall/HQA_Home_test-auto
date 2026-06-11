@@ -26,14 +26,7 @@ def driver():
 def mobile_driver():
     """建立 iPhone 12 Pro Chrome 行動模擬 WebDriver，WAP 測試專用。"""
     options = Options()
-    options.add_experimental_option("mobileEmulation", {
-        "deviceMetrics": {"width": 390, "height": 844, "pixelRatio": 3.0},
-        "userAgent": (
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) "
-            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 "
-            "Mobile/15E148 Safari/604.1"
-        ),
-    })
+    options.add_experimental_option("mobileEmulation", {"deviceName": "iPhone 12 Pro"})
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
