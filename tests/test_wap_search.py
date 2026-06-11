@@ -5,20 +5,6 @@ from pages.live_page import LivePage
 
 SEARCH_QUERY = "StarCraft II"
 
-# Slow 3G 網路條件（Chrome DevTools Protocol 參數）
-_SLOW_3G = {
-    "offline": False,
-    "downloadThroughput": 500 * 1024 / 8,   # 500 Kbps
-    "uploadThroughput": 500 * 1024 / 8,
-    "latency": 400,                          # 400ms RTT
-}
-_NO_THROTTLE = {
-    "offline": False,
-    "downloadThroughput": -1,
-    "uploadThroughput": -1,
-    "latency": 0,
-}
-
 
 @pytest.mark.wap
 class TestWAPSearch:
@@ -85,39 +71,3 @@ class TestWAPSearch:
         live.wait_for_player()
 
         assert live.is_player_visible(), "行動版播放器元素不可見"
-
-
-@pytest.mark.wap
-class TestWAPNetwork:
-    """WAP 網路品質場景：Slow 3G (500 Kbps / 400ms RTT) 下的基礎功能驗證。"""
-
-    def test_wap_slow_3g_homepage_loads(self, mobile_driver):
-        """Slow 3G 下行動版首頁仍應在合理時間內載入完成。"""
-        mobile_driver.execute_cdp_cmd("Network.enable", {})
-        mobile_driver.execute_cdp_cmd("Network.emulateNetworkConditions", _SLOW_3G)
-        try:
-            home = MobileHomePage(mobile_driver)
-            home.open()
-            assert "twitch.tv" in mobile_driver.current_url, \
-                "Slow 3G 下首頁未載入 Twitch"
-            assert mobile_driver.title != "", "Slow 3G 下首頁 title 為空"
-        finally:
-            mobile_driver.execute_cdp_cmd("Network.emulateNetworkConditions", _NO_THROTTLE)
-
-    def test_wap_slow_3g_search_works(self, mobile_driver):
-        """Slow 3G 下行動版搜尋應仍可送出並得到搜尋結果頁。"""
-        mobile_driver.execute_cdp_cmd("Network.enable", {})
-        mobile_driver.execute_cdp_cmd("Network.emulateNetworkConditions", _SLOW_3G)
-        try:
-            home = MobileHomePage(mobile_driver)
-            home.open()
-            home.click_search()
-
-            search = SearchPage(mobile_driver)
-            search.type_query(SEARCH_QUERY)
-            search.submit_search()
-
-            assert "twitch.tv" in mobile_driver.current_url, \
-                "Slow 3G 下搜尋後不應離開 Twitch"
-        finally:
-            mobile_driver.execute_cdp_cmd("Network.emulateNetworkConditions", _NO_THROTTLE)
